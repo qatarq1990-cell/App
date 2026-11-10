@@ -1,3 +1,4 @@
+
 name: Build FuturesLab APK
 
 on:
@@ -21,15 +22,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - name: Extract Android Project
+      - name: Setup Android SDK
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Extract Project
         run: |
           mkdir project
           unzip -o FuturesLabAndroid_Project.zip -d project
